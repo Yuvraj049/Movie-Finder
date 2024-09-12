@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,400i,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
-    <title>Lovely Movies</title>
+    <title>Movie Finder</title>
     <!--    http://www.omdbapi.com/?s=irishman&apiKey=3ef4ab9e -->
 </head>
 <body>
 <header class="main-header">
-    <h1 class="main-header__branding">Lovely Movies</h1>
+    <h1 class="main-header__branding">Movie Finder</h1>
     <div class="main-header__search">
         <span class="loader"></span>
         <input type="search" placeholder="Search in movies..."
-               autocomplete="off" id="search">
+               autocomplete="off" id="search" maxlength="50">
     </div>
 </header>
 <main class="content">
@@ -22,6 +22,7 @@
         <h3>Results for "<strong id="search-trend">Transformers</strong>"&nbsp;<span id="page-number"></span></h3>
         <span class="loader"></span>
         <div class="content__result__list" id="result-wrapper"></div>
+        <button class="content__result__prev-btn" id="prev-btn">Previous Page</button>
         <button class="content__result__next-btn" id="next-btn">Next Page</button>
     </section>
     <section class="movie-details" id="id-details-wrapper">

@@ -155,6 +155,17 @@ main.content {
     cursor: pointer;
     margin-bottom: 1rem;
 }
+.content__result__prev-btn {
+    background: #d5475d;
+    border: none;
+    color: #f4f4f4;
+    outline: none;
+    padding: .3rem .85rem;
+    border-radius: 3px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
 
 .content__result__list {
     display: flex;
@@ -327,8 +338,20 @@ main.content {
     position: relative;
 }
 
+.poster-fallback {
+    color: #666666;  /* Darker text color for visibility */
+    font-size: 16px;
+    font-weight: bold;  /* Make the text more visible */
+    text-align: center;
+    opacity: 0.8;
+}
+
+.movie-item__poster[style*="background-color"] {
+    background-color: #f0f0f0;  /* Slightly darker background for better contrast */
+}
+
 .movie-item__poster:before {
-    content: "Poster Not Found!";
+    /* content: "Poster Not Found!"; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -338,6 +361,8 @@ main.content {
     opacity: .5;
     font-weight: normal;
 }
+
+
 
 .movie-item__title {
     font-size: 18px;

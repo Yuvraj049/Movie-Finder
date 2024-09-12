@@ -6,6 +6,7 @@ const searchInput = document.getElementById("search");
 const searchTrendSpan = document.getElementById("search-trend");
 const pageNumberSpan = document.getElementById("page-number");
 const nextBtn = document.getElementById("next-btn");
+const prevBtn = document.getElementById("prev-btn");
 
 let SEARCH_DEBOUNCE_FLAG = null;
 let CURRENT_PAGE = 1;
@@ -47,6 +48,7 @@ function initListeners() {
     searchInput.addEventListener("input", searchInMovies);
 
     nextBtn.addEventListener("click", nextBtnClickHandler)
+    prevBtn.addEventListener("click", prevBtnClickHandler)
 }
 
 function searchInMovies(e) {
@@ -83,6 +85,20 @@ function nextBtnClickHandler() {
     getMoviesAndParse(trend, ++CURRENT_PAGE)
 }
 
+function prevBtnClickHandler() {
+    if (CURRENT_PAGE > 1) {
+        let trend = searchInput.value;
+        if (!trend) trend = "Transformers";
+
+        // Avoid unnecessary API calls for trends less than 3 characters
+        if (trend.length < 3) return;
+
+        // Fetch the previous page
+        getMoviesAndParse(trend, --CURRENT_PAGE);
+    }
+}
+
+
 function getMoviesAndParse(trend, page) {
 
     resultWrapper.innerHTML = '';
@@ -90,6 +106,7 @@ function getMoviesAndParse(trend, page) {
     // update search-trend span
     searchTrendSpan.innerText = trend.length < 10 ? trend : trend.substr(0, 8) + '...';
     nextBtn.style.display = "none";
+    prevBtn.style.display = "none";
     pageNumberSpan.innerText = '';
 
     // handle search
@@ -100,7 +117,9 @@ function getMoviesAndParse(trend, page) {
                 pageNumberSpan.innerText = `| Page: ${page}`;
                 nextBtn.style.display = "inline-block";
             }
-
+            if (page > 1) {
+                prevBtn.style.display = "inline-block";
+            }
             if (movies.length)
                 movies.map(generateMovieItem);
             else
@@ -116,23 +135,49 @@ function getMoviesAndParse(trend, page) {
 
 function generateMovieItem(item) {
     let movieElm = document.createElement("div");
-    movieElm.setAttribute("data-imdbid", item.imdbID);
-    movieElm.classList.add("movie-item");
+movieElm.setAttribute("data-imdbid", item.imdbID);
+movieElm.classList.add("movie-item");
 
-    movieElm.addEventListener("click", handleMovieItemClick);
+movieElm.addEventListener("click", handleMovieItemClick);
 
+const img = new Image();
+img.src = item.Poster;
+
+// Check if the poster image loads successfully
+img.onload = function() {
     movieElm.innerHTML = `
-            <figure class="movie-item__poster"
-                style="background-image: url('${item.Poster}')"></figure>
-            <h2 class="movie-item__title">${item.Title}</h2>
-            <div class="movie-item__meta">
-                <span class="movie-item__meta__year">${item.Year}</span>
-                <span class="movie-item__meta__divider">&nbsp;-&nbsp;</span>
-                <span class="movie-item__meta__imdb-link">
-                    <a href="https://www.imdb.com/title/${item.imdbID}" target="_blank">IMDB</a></span>
-            </div>`;
+        <figure class="movie-item__poster"
+            style="background-image: url('${item.Poster}')"></figure>
+        <h2 class="movie-item__title">${item.Title}</h2>
+        <div class="movie-item__meta">
+            <span class="movie-item__meta__year">${item.Year}</span>
+            <span class="movie-item__meta__divider">&nbsp;-&nbsp;</span>
+            <span class="movie-item__meta__imdb-link">
+                <a href="https://www.imdb.com/title/${item.imdbID}" target="_blank">IMDB</a>
+            </span>
+        </div>`;
+};
 
-    resultWrapper.append(movieElm)
+// Handle the case when the poster image fails to load
+img.onerror = function() {
+    movieElm.innerHTML = `
+        <figure class="movie-item__poster"
+            style="background-color: #e0e0e0; display: flex; justify-content: center; align-items: center;content: "Poster Not Found!";">
+            <span class="poster-fallback">Poster Not Found!</span>
+        </figure>
+        <h2 class="movie-item__title">${item.Title}</h2>
+        <div class="movie-item__meta">
+            <span class="movie-item__meta__year">${item.Year}</span>
+            <span class="movie-item__meta__divider">&nbsp;-&nbsp;</span>
+            <span class="movie-item__meta__imdb-link">
+                <a href="https://www.imdb.com/title/${item.imdbID}" target="_blank">IMDB</a>
+            </span>
+        </div>`;
+};
+
+// Append the movie element to the result wrapper
+resultWrapper.append(movieElm);
+
 }
 
 function generateNoContentPlaceholder() {
